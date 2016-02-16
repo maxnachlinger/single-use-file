@@ -1,10 +1,14 @@
 {
   "name": "single-use-file",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple library which writes a file, and then deletes it when read.",
   "main": "index.js",
   "scripts": {
     "test": "standard && node_modules/.bin/tape test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxnachlinger/single-use-file.git"
   },
   "author": "Max Nachlinger",
   "license": "ISC",
