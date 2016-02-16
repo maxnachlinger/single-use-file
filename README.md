@@ -13,16 +13,15 @@ A simple library which writes a file, and then deletes it when read.
 [standard-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
 [standard-url]: http://standardjs.com/
 
+### Why?
+
+When your node application gets an uncaught exception, you should log it and shut down. The idea is to do something safe since your app is crashing and additional errors might cause it to hang or obscure the root cause of the crash. One safe thing is to write the exception to a file and then crash. When your app starts back up and 
+connects to everything, it can then read the exception from that file and report the error properly.
+
 ### Installation:
 ```
 npm i single-use-file --save
 ```
-
-### Why?
-
-When your node application get an uncaught exception, you should log it and shut down. In other words, do the safest thing
-so as to not cause more errors. One safe thing is to write a file to the filesystem. When your app starts back up and 
-connects to everything, it can then read the error file and report the error properly.
 
 ### Basic Example
 ```javascript
