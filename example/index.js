@@ -14,7 +14,7 @@ process.on('uncaughtException', (err) => {
     })
 })
 
-function startup() {
+function startup () {
   singleUseFile.read()
     .then((contents) => {
       if (contents) {
