@@ -3,7 +3,9 @@ const path = require('path')
 const fs = require('fs')
 const promisify = require('./util/promisify')
 
-const crashFilePath = path.join(path.dirname(process.argv[ 1 ]), 'single-use-file.json')
+module.exports.fileName = 'single-use-file.json'
+
+const crashFilePath = path.join(path.dirname(process.argv[ 1 ]), exports.fileName)
 
 function crashFileExists (cb) {
   return fs.stat(crashFilePath, (err) => {
