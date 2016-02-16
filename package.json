@@ -1,0 +1,19 @@
+{
+  "name": "single-use-file",
+  "version": "0.0.1",
+  "description": "A simple library which writes a file, and then deletes it when read.",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && node_modules/.bin/tape test/*.js"
+  },
+  "author": "Max Nachlinger",
+  "license": "ISC",
+  "devDependencies": {
+    "standard": "^6.0.5",
+    "tape": "^4.4.0",
+    "tape-catch": "^1.0.4"
+  },
+  "directories": {
+    "test": "test"
+  }
+}
