@@ -1,6 +1,6 @@
 {
   "name": "single-use-file",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A simple library which writes a file, and then deletes it when read.",
   "main": "index.js",
   "scripts": {

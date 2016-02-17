@@ -63,7 +63,7 @@ module.exports.read = (cb) => {
   if (cb) {
     return read(cb)
   }
-  return promisify(read)()
+  return promisify(read)
 }
 
 function write (info, cb) {
@@ -83,6 +83,5 @@ module.exports.write = (info, cb) => {
   if (cb) {
     return write(info, cb)
   }
-  return promisify(write)(info)
+  return promisify(write, info)
 }
-

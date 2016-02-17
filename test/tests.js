@@ -56,7 +56,7 @@ test('reads an Error crash file and returns a promise', (t) => {
       t.ok(contents, 'Error file has contents')
       t.ok(~contents.indexOf('test error'), 'Error contents should contain "test error"')
 
-      return promisify(fs.stat)(filePath)
+      return promisify(fs.stat, filePath)
         .catch((err) => {
           if (!err || (err && err.code !== 'ENOENT')) {
             return true
