@@ -73,3 +73,34 @@ test('reads an Error crash file and returns a promise', (t) => {
       t.end()
     })
 })
+
+test('reads an Error crash file and returns even if the error file is invalid JSON', (t) => {
+  let filePath
+
+  singleUseFile.write(new Error('test error'))
+    .then((_filePath) => {
+      t.ok(_filePath, 'Written file path was returned')
+      filePath = _filePath
+      return promisify(fs.writeFile, filePath, null) // write invalid json
+    })
+    .then(() => singleUseFile.read())
+    .then((contents) => {
+      t.notOk(contents, 'Error file has no content')
+
+      return promisify(fs.stat, filePath)
+        .catch((err) => {
+          if (!err || (err && err.code !== 'ENOENT')) {
+            return true
+          }
+          return false
+        })
+    })
+    .then((filExists) => {
+      t.notOk(filExists, 'Error file should be removed on read')
+      t.end()
+    })
+    .catch((err) => {
+      t.fail(err)
+      t.end()
+    })
+})

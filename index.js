@@ -28,9 +28,7 @@ function readCrashFile (cb) {
     }
     try {
       contents = JSON.parse(contents)
-    } catch (err) {
-      return cb(new Error(`Crash file contents were not valid JSON. Contents: ${contents}, Error: ${err.stack}`))
-    }
+    } catch (err) {}
     cb(null, contents)
   })
 }
