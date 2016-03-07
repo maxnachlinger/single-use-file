@@ -48,9 +48,7 @@ function startup() {
       }
 
       // no crash file, trigger an uncaughtException - you know, for fun
-      setTimeout(() => {
-        throw new Error('test uncaughtException')
-      }, 1000)
+      setTimeout(() => throw new Error('test uncaughtException'), 1000)
     })
     .catch((err) => console.error(`Could not read crash file, error: ${err.stack || err}`))
 }
