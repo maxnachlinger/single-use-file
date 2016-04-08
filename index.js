@@ -1,7 +1,7 @@
 'use strict'
 const path = require('path')
 const fs = require('fs')
-const promisify = require('./util/promisify')
+const cbToPromise = require('cb-to-promise')
 
 module.exports.fileName = 'single-use-file.json'
 
@@ -61,7 +61,7 @@ module.exports.read = (cb) => {
   if (cb) {
     return read(cb)
   }
-  return promisify(read)()
+  return cbToPromise(read)()
 }
 
 function write (info, cb) {
@@ -81,5 +81,5 @@ module.exports.write = (info, cb) => {
   if (cb) {
     return write(info, cb)
   }
-  return promisify(write)(info)
+  return cbToPromise(write)(info)
 }

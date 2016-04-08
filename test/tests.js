@@ -2,7 +2,7 @@
 const fs = require('fs')
 const test = require('tape-catch')
 const singleUseFile = require('..')
-const promisify = require('../util/promisify')
+const cbToPromise = require('cb-to-promise')
 
 test('writes an Error to a crash file', (t) => {
   singleUseFile.write(new Error('test error'), (err, filePath) => {
@@ -56,7 +56,7 @@ test('reads an Error crash file and returns a promise', (t) => {
       t.ok(contents, 'Error file has contents')
       t.ok(~contents.indexOf('test error'), 'Error contents should contain "test error"')
 
-      return promisify(fs.stat)(filePath)
+      return cbToPromise(fs.stat)(filePath)
         .catch((err) => {
           if (!err || (err && err.code !== 'ENOENT')) {
             return true
@@ -81,13 +81,13 @@ test('reads an Error crash file and returns even if the error file is invalid JS
     .then((_filePath) => {
       t.ok(_filePath, 'Written file path was returned')
       filePath = _filePath
-      return promisify(fs.writeFile)(filePath, null) // write invalid json
+      return cbToPromise(fs.writeFile)(filePath, null) // write invalid json
     })
     .then(() => singleUseFile.read())
     .then((contents) => {
       t.notOk(contents, 'Error file has no content')
 
-      return promisify(fs.stat)(filePath)
+      return cbToPromise(fs.stat)(filePath)
         .catch((err) => {
           if (!err || (err && err.code !== 'ENOENT')) {
             return true
