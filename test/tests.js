@@ -2,7 +2,15 @@
 const fs = require('fs')
 const test = require('tape-catch')
 const singleUseFile = require('..')
-const cbToPromise = require('cb-to-promise')
+
+const fileExists = (filePath) => new Promise((resolve) => {
+  return fs.stat(filePath, (err) => {
+    if (!err || (err && err.code !== 'ENOENT')) {
+      return resolve(true)
+    }
+    return resolve(false)
+  })
+})
 
 test('writes an Error to a crash file', (t) => {
   singleUseFile.write(new Error('test error'), (err, filePath) => {
@@ -55,14 +63,7 @@ test('reads an Error crash file and returns a promise', (t) => {
     .then((contents) => {
       t.ok(contents, 'Error file has contents')
       t.ok(~contents.indexOf('test error'), 'Error contents should contain "test error"')
-
-      return cbToPromise(fs.stat)(filePath)
-        .catch((err) => {
-          if (!err || (err && err.code !== 'ENOENT')) {
-            return true
-          }
-          return false
-        })
+      return fileExists(filePath)
     })
     .then((filExists) => {
       t.notOk(filExists, 'Error file should be removed on read')
@@ -81,19 +82,16 @@ test('reads an Error crash file and returns even if the error file is invalid JS
     .then((_filePath) => {
       t.ok(_filePath, 'Written file path was returned')
       filePath = _filePath
-      return cbToPromise(fs.writeFile)(filePath, null) // write invalid json
+
+      // write invalid json
+      return new Promise((resolve, reject) => {
+        return fs.writeFile(filePath, null, (err) => err ? reject(err) : resolve())
+      })
     })
     .then(() => singleUseFile.read())
     .then((contents) => {
       t.notOk(contents, 'Error file has no content')
-
-      return cbToPromise(fs.stat)(filePath)
-        .catch((err) => {
-          if (!err || (err && err.code !== 'ENOENT')) {
-            return true
-          }
-          return false
-        })
+      return fileExists(filePath)
     })
     .then((filExists) => {
       t.notOk(filExists, 'Error file should be removed on read')

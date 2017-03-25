@@ -1,85 +1,94 @@
 'use strict'
 const path = require('path')
 const fs = require('fs')
-const cbToPromise = require('cb-to-promise')
 
 module.exports.fileName = 'single-use-file.json'
 
-const crashFilePath = path.join(path.dirname(process.argv[ 1 ]), exports.fileName)
+const crashFilePath = path.join(path.dirname(process.argv[1]), exports.fileName)
 
-function crashFileExists (cb) {
-  return fs.stat(crashFilePath, (err) => {
+const crashFileExists = () => {
+  return new Promise((resolve, reject) => fs.stat(crashFilePath, (err) => {
     if (!err) {
-      return cb(null, true)
+      return resolve(true)
     }
 
     // no crash file found, this isn't an error
     if (err.code && err.code === 'ENOENT') {
-      return cb(null, false)
+      return resolve(false)
     }
-    return cb(err)
-  })
+
+    return reject(err)
+  }))
 }
 
-function readCrashFile (cb) {
-  fs.readFile(crashFilePath, 'utf8', (err, contents) => {
+const readCrashFile = () => {
+  return new Promise((resolve, reject) => fs.readFile(crashFilePath, 'utf8', (err, contents) => {
     if (err) {
-      return cb(err)
+      return reject(err)
     }
     try {
       contents = JSON.parse(contents)
     } catch (err) {}
-    cb(null, contents)
-  })
+
+    return resolve(contents)
+  }))
 }
 
-function read (cb) {
-  crashFileExists((err, exists) => {
-    if (err) {
-      return cb(err)
-    }
-    if (!exists) {
-      return cb()
-    }
-
-    readCrashFile((err, contents) => {
-      if (err) {
-        return cb(err)
+const removeCrashFile = () => {
+  return new Promise((resolve, reject) => {
+    return fs.unlink(crashFilePath, (err) => {
+      if (!err) {
+        return resolve()
       }
-
-      fs.unlink(crashFilePath, (err) => {
-        if (err) {
-          return cb(err)
-        }
-        cb(null, contents)
-      })
+      // file already gone
+      if (err.code === 'ENOENT') {
+        return resolve()
+      }
+      return reject(err)
     })
   })
 }
 
-module.exports.read = (cb) => {
-  if (cb) {
-    return read(cb)
-  }
-  return cbToPromise(read)()
+const read = () => {
+  return crashFileExists()
+    .then((exists) => {
+      if (!exists) {
+        return
+      }
+      return readCrashFile()
+    })
+    .then((contents) => {
+      return removeCrashFile()
+        .then(() => contents)
+    })
 }
 
-function write (info, cb) {
+const writeFile = (info) => {
+  return new Promise((resolve, reject) => {
+    return fs.writeFile(crashFilePath, JSON.stringify(info), (err) => err ? reject(err) : resolve(crashFilePath))
+  })
+}
+
+module.exports.read = (cb) => {
+  if (!cb) {
+    return read()
+  }
+
+  return read()
+    .catch(cb)
+    .then((contents) => cb(null, contents))
+}
+
+module.exports.write = (info, cb) => {
   if (info instanceof Error) {
     info = info.stack || info
   }
 
-  return fs.writeFile(crashFilePath, JSON.stringify(info), (err) => {
-    if (err) {
-      return cb(err)
-    }
-    return cb(null, crashFilePath)
-  })
-}
-
-module.exports.write = (info, cb) => {
-  if (cb) {
-    return write(info, cb)
+  if (!cb) {
+    return writeFile(info)
   }
-  return cbToPromise(write)(info)
+
+  return writeFile(info)
+    .catch(cb)
+    .then((filePath) => cb(null, filePath))
 }
