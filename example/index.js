@@ -28,7 +28,7 @@ function startup () {
       }, 1000)
     })
     .catch((err) => {
-      console.error(`Could not read crash file, error: ${errs}`)
+      console.error(`Could not read crash file, error: ${err}`)
     })
 }
 
