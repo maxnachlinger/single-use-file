@@ -14,7 +14,7 @@
   "author": "Max Nachlinger",
   "license": "ISC",
   "devDependencies": {
-    "snazzy": "^6.0.0",
+    "snazzy": "^7.1.0",
     "standard": "^10.0.1",
     "tape": "^4.6.3",
     "tape-catch": "^1.0.6"
