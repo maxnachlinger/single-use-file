@@ -13,9 +13,8 @@
   },
   "author": "Max Nachlinger",
   "license": "ISC",
-  "devDependencies": {
     "snazzy": "^8.0.0",
-    "standard": "^11.0.1",
+    "standard": "^12.0.0",
     "tape": "^4.6.3",
     "tape-catch": "^1.0.6"
   },
