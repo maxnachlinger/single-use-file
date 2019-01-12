@@ -1,5 +1,7 @@
 # single-use-file
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/maxnachlinger/single-use-file.svg)](https://greenkeeper.io/)
+
 A simple library which writes a file, and then deletes it when read.
 
 [![travis][travis-image]][travis-url]
